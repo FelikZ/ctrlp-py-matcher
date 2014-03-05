@@ -19,4 +19,9 @@ count  total (s)   self (s)  function
     3              0.730215  pymatcher#PyMatch()
 ```
 
+To install this plugin you need Vim compiled with `+python` flag:
+```
+vim --version | grep python
+```
+
 Full documentation is available [here](https://github.com/FelikZ/ctrlp-py-matcher/blob/master/doc/pymatcher.txt)
