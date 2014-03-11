@@ -19,7 +19,7 @@ count  total (s)   self (s)  function
     3              0.730215  pymatcher#PyMatch()
 ```
 
-To install this plugin you need Vim compiled with `+python` flag:
+To install this plugin you **need** Vim compiled with `+python` flag and version `7.4`+ (because of `vim.bindeval` like python functions. It can be rewriten via your pull request, to support vim < `7.3`):
 ```
 vim --version | grep python
 ```
