@@ -1,6 +1,6 @@
 *pymatcher.txt* 
 
-Version: 0.9b
+Version: 1.0b
 Author : FelikZ <thefelikz gmailcom>
 License: {{{
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
