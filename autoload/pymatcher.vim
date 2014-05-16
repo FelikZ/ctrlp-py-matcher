@@ -26,14 +26,27 @@ aregex = int(vim.eval('a:regex'))
 
 rez = vim.bindeval('s:rez')
 
+specialChars = ['^','$','.','{','}','(',')','[',']','\\','/','+']
+
 regex = ''
 if aregex == 1:
     regex = astr
 else:
-    for c in lowAstr[:-1]:
-        regex += c + '[^' + c + ']*'
+    if len(lowAstr) == 1:
+        c = lowAstr
+        if c in specialChars:
+            c = '\\' + c
+        regex += c
     else:
-        regex += lowAstr[-1]
+        for c in lowAstr[:-1]:
+            if c in specialChars:
+                c = '\\' + c
+            regex += c + '[^' + c + ']*'
+        else:
+            c = lowAstr[-1]
+            if c in specialChars:
+                c = '\\' + c
+            regex += c
 
 res = []
 prog = re.compile(regex)
@@ -51,7 +64,8 @@ if mmode == 'filename-only':
         result = prog.search(lineLower)
         if result:
             scores = []
-            scores.append((1 + result.start()) * (result.end() - result.start() + 1))
+            scores.append(result.end() - result.start() + 1)
+            # scores.append((1 + result.start()) * (result.end() - result.start() + 1))
             scores.append(( len(lineLower) + 1 ) / 100.0)
             scores.append(( len(line) + 1 ) / 1000.0)
             score = 1000.0 / sum(scores)
