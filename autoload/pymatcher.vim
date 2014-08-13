@@ -1,19 +1,21 @@
 " Python Matcher
 
-if !has('python')
-    echo 'In order to use pymatcher plugin, you need +python compiled vim'
+if !has('python') && !has('python3')
+    echo 'In order to use pymatcher plugin, you need +python or +python3 compiled vim'
 endif
 
 function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
 
     call clearmatches()
+    
+    if a:str == ''
+        return a:items[0:a:limit]
+    endif
 
     let s:rez = []
     let s:regex = ''
 
-    if a:str != ''
-
-python << EOF
+exec (has('python') ? ':py' : ':py3') ' << EOF'
 import vim, re
 from datetime import datetime
 
@@ -89,18 +91,15 @@ rez.extend(sortedlist)
 vim.command("let s:regex = '%s'" % regex)
 EOF
 
-        let s:matchregex = '\v\c'
+    let s:matchregex = '\v\c'
 
-        if a:mmode == 'filename-only'
-            let s:matchregex .= '[\^\/]*'
-        endif
-
-        let s:matchregex .= s:regex
-
-        call matchadd('CtrlPMatch', s:matchregex)
-    else
-        let s:rez = a:items[0:a:limit]
+    if a:mmode == 'filename-only'
+        let s:matchregex .= '[\^\/]*'
     endif
+
+    let s:matchregex .= s:regex
+
+    call matchadd('CtrlPMatch', s:matchregex)
 
     return s:rez
 endfunction
