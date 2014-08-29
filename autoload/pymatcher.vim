@@ -17,6 +17,7 @@ function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
 
 exec (has('python') ? ':py' : ':py3') ' << EOF'
 import vim, re
+import heapq
 from datetime import datetime
 
 items = vim.eval('a:items')
@@ -85,10 +86,7 @@ if mmode == 'filename-only':
 else:
     res = [(path_score(line), line) for line in items]
 
-sortedlist = sorted(res, key=lambda x: x[0], reverse=True)[:limit]
-sortedlist = [x[1] for x in sortedlist]
-
-rez.extend(sortedlist)
+rez.extend([line for score, line in heapq.nlargest(limit, res)])
 
 vim.command("let s:regex = '%s'" % regex)
 EOF
