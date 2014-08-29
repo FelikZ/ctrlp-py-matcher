@@ -69,18 +69,21 @@ def filename_score(line):
     return 0
 
 
+def path_score(line):
+    lineLower = line.lower()
+    result = prog.search(lineLower)
+    if result:
+        score = result.end() - result.start() + 1
+        score = score + ( len(lineLower) + 1 ) / 100.0
+        return 1000.0 / score
+
+    return 0
+
+
 if mmode == 'filename-only':
     res = [(filename_score(line), line) for line in items]
 else:
-    for line in items:
-        lineLower = line.lower()
-        result = prog.search(lineLower)
-        if result:
-            scores = []
-            scores.append(result.end() - result.start() + 1)
-            scores.append(( len(lineLower) + 1 ) / 100.0)
-            score = 1000.0 / sum(scores)
-            res.append((score, line))
+    res = [(path_score(line), line) for line in items]
 
 sortedlist = sorted(res, key=lambda x: x[0], reverse=True)[:limit]
 sortedlist = [x[1] for x in sortedlist]
