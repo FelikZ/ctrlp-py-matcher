@@ -17,6 +17,7 @@ function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
 
 exec (has('python') ? ':py' : ':py3') ' << EOF'
 import vim, re
+import heapq
 from datetime import datetime
 
 items = vim.eval('a:items')
@@ -53,40 +54,39 @@ else:
 res = []
 prog = re.compile(regex)
 
+def filename_score(line):
+    # get filename via reverse find to improve performance
+    slashPos = line.rfind('/')
+    line = line if slashPos == -1 else line[slashPos + 1:]
+
+    lineLower = line.lower()
+    result = prog.search(lineLower)
+    if result:
+        score = result.end() - result.start() + 1
+        score = score + ( len(lineLower) + 1 ) / 100.0
+        score = score + ( len(line) + 1 ) / 1000.0
+        return 1000.0 / score
+
+    return 0
+
+
+def path_score(line):
+    lineLower = line.lower()
+    result = prog.search(lineLower)
+    if result:
+        score = result.end() - result.start() + 1
+        score = score + ( len(lineLower) + 1 ) / 100.0
+        return 1000.0 / score
+
+    return 0
+
+
 if mmode == 'filename-only':
-    for line in items:
-        lineLower = line
-
-        # get filename via reverse find to improve performance
-        slashPos = lineLower.rfind('/')
-        if slashPos != -1:
-            lineLower = lineLower[slashPos + 1:]
-
-        lineLower = lineLower.lower()
-        result = prog.search(lineLower)
-        if result:
-            scores = []
-            scores.append(result.end() - result.start() + 1)
-            # scores.append((1 + result.start()) * (result.end() - result.start() + 1))
-            scores.append(( len(lineLower) + 1 ) / 100.0)
-            scores.append(( len(line) + 1 ) / 1000.0)
-            score = 1000.0 / sum(scores)
-            res.append((score, line))
+    res = [(filename_score(line), line) for line in items]
 else:
-    for line in items:
-        lineLower = line.lower()
-        result = prog.search(lineLower)
-        if result:
-            scores = []
-            scores.append(result.end() - result.start() + 1)
-            scores.append(( len(lineLower) + 1 ) / 100.0)
-            score = 1000.0 / sum(scores)
-            res.append((score, line))
+    res = [(path_score(line), line) for line in items]
 
-sortedlist = sorted(res, key=lambda x: x[0], reverse=True)[:limit]
-sortedlist = [x[1] for x in sortedlist]
-
-rez.extend(sortedlist)
+rez.extend([line for score, line in heapq.nlargest(limit, res)])
 
 vim.command("let s:regex = '%s'" % regex)
 EOF
