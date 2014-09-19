@@ -36,26 +36,24 @@ else:
     escaped = [re.escape(c) for c in lowAstr]
     regex = '(?=(' + ''.join([c + '[^' + c + ']*?' for c in escaped]) + '))'
 
-res = []
 prog = re.compile(regex)
 
-def filename_score(line):
-    line = os.path.basename(line)
-    results = [1.0 / len(result.group(1)) for result in prog.finditer(line) if result]
+# strip the rest of the path if only interested in the filename
+if mmode == 'filename-only':
+  items = [os.path.basename(line) for line in items]
 
+# set the strings to lowercase
+item = [line.lower() for line in items]
+
+def score(line):
+    results = [1.0 / len(result.group(1)) for result in prog.finditer(line) if result]
     return max(results) if results else 0
 
+# determine the score for each item
+results = [(score(line), line) for line in items]
 
-def path_score(line):
-    line = line.lower()
-    results = [1.0 / len(result.group(1)) for result in prog.finditer(line) if result]
-
-    return max(results) if results else 0
-
-scorer = filename_score if mmode == 'filename-only' else path_score
-
-res = [(scorer(line), line) for line in items]
-rez.extend(line for score, line in heapq.nlargest(limit, res))
+# return the best results
+rez.extend(line for _, line in heapq.nlargest(limit, results))
 
 vim.command("let s:regex = '%s'" % regex)
 EOF
