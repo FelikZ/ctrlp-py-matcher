@@ -74,7 +74,7 @@ if mmode == 'filename-only':
 else:
     res = [(path_score(line), line) for line in items]
 
-rez.extend([line for score, line in heapq.nlargest(limit, res)])
+rez.extend(line for score, line in heapq.nlargest(limit, res))
 
 vim.command("let s:regex = '%s'" % regex)
 EOF
