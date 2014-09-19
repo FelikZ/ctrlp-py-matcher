@@ -16,9 +16,9 @@ function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
     let s:regex = ''
 
 exec (has('python') ? ':py' : ':py3') ' << EOF'
+import os
 import vim, re
 import heapq
-from datetime import datetime
 
 items = vim.eval('a:items')
 astr = vim.eval('a:str')
@@ -29,64 +29,28 @@ aregex = int(vim.eval('a:regex'))
 
 rez = vim.bindeval('s:rez')
 
-specialChars = ['^','$','.','{','}','(',')','[',']','\\','/','+']
-
 regex = ''
 if aregex == 1:
     regex = astr
 else:
-    if len(lowAstr) == 1:
-        c = lowAstr
-        if c in specialChars:
-            c = '\\' + c
-        regex += c
-    else:
-        for c in lowAstr[:-1]:
-            if c in specialChars:
-                c = '\\' + c
-            regex += c + '[^' + c + ']*'
-        else:
-            c = lowAstr[-1]
-            if c in specialChars:
-                c = '\\' + c
-            regex += c
+    escaped = [re.escape(c) for c in lowAstr]
+    regex = '(?=(' + ''.join([c + '[^' + c + ']*?' for c in escaped]) + '))'
 
-res = []
-prog = re.compile(regex)
+prog = re.compile(regex, re.IGNORECASE)
 
-def filename_score(line):
-    # get filename via reverse find to improve performance
-    slashPos = line.rfind('/')
-    line = line if slashPos == -1 else line[slashPos + 1:]
-
-    lineLower = line.lower()
-    result = prog.search(lineLower)
-    if result:
-        score = result.end() - result.start() + 1
-        score = score + ( len(lineLower) + 1 ) / 100.0
-        score = score + ( len(line) + 1 ) / 1000.0
-        return 1000.0 / score
-
-    return 0
-
-
-def path_score(line):
-    lineLower = line.lower()
-    result = prog.search(lineLower)
-    if result:
-        score = result.end() - result.start() + 1
-        score = score + ( len(lineLower) + 1 ) / 100.0
-        return 1000.0 / score
-
-    return 0
-
-
+# strip the rest of the path if only interested in the filename
 if mmode == 'filename-only':
-    res = [(filename_score(line), line) for line in items]
-else:
-    res = [(path_score(line), line) for line in items]
+  items = [os.path.basename(line) for line in items]
 
-rez.extend([line for score, line in heapq.nlargest(limit, res)])
+def score(line):
+    results = [1.0 / len(result.group(1)) for result in prog.finditer(line) if result]
+    return max(results) if results else 0
+
+# determine the score for each item
+results = [(score(line), line) for line in items]
+
+# return the best results
+rez.extend(line for _, line in heapq.nlargest(limit, results))
 
 vim.command("let s:regex = '%s'" % regex)
 EOF
