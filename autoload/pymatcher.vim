@@ -36,14 +36,11 @@ else:
     escaped = [re.escape(c) for c in lowAstr]
     regex = '(?=(' + ''.join([c + '[^' + c + ']*?' for c in escaped]) + '))'
 
-prog = re.compile(regex)
+prog = re.compile(regex, re.IGNORECASE)
 
 # strip the rest of the path if only interested in the filename
 if mmode == 'filename-only':
   items = [os.path.basename(line) for line in items]
-
-# set the strings to lowercase
-item = [line.lower() for line in items]
 
 def score(line):
     results = [1.0 / len(result.group(1)) for result in prog.finditer(line) if result]
