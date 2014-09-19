@@ -36,21 +36,10 @@ if aregex == 1:
     regex = astr
 else:
     if len(lowAstr) == 1:
-        c = lowAstr
-        if c in specialChars:
-            c = '\\' + c
-        regex += c
+        regex = re.escape(lowAstr)
     else:
-        for c in lowAstr[:-1]:
-            if c in specialChars:
-                c = '\\' + c
-            regex += c + '[^' + c + ']*?'
-        else:
-            c = lowAstr[-1]
-            if c in specialChars:
-                c = '\\' + c
-            regex += c
-        regex = '(?=(' + regex + '))'
+        escaped = [re.escape(c) for c in lowAstr]
+        regex = '(?=(' + ''.join([c + '[^' + c + ']*?' for c in escaped]) + '))'
 
 res = []
 prog = re.compile(regex)
