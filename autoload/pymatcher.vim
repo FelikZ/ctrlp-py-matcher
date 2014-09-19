@@ -56,13 +56,12 @@ prog = re.compile(regex)
 
 def filename_score(line):
     # get filename via reverse find to improve performance
-    line = line[line.rfind('/') + 1:]
+    line = line[line.rfind('/') + 1:].lower()
 
-    lineLower = line.lower()
-    result = prog.search(lineLower)
+    result = prog.search(line)
     if result:
         score = result.end() - result.start() + 1
-        score = score + ( len(lineLower) + 1 ) / 100.0
+        score = score + ( len(line) + 1 ) / 100.0
         score = score + ( len(line) + 1 ) / 1000.0
         return 1000.0 / score
 
