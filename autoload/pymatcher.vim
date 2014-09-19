@@ -44,39 +44,29 @@ else:
         for c in lowAstr[:-1]:
             if c in specialChars:
                 c = '\\' + c
-            regex += c + '[^' + c + ']*'
+            regex += c + '[^' + c + ']*?'
         else:
             c = lowAstr[-1]
             if c in specialChars:
                 c = '\\' + c
             regex += c
+        regex = '(?=(' + regex + '))'
 
 res = []
 prog = re.compile(regex)
 
 def filename_score(line):
-    # get filename via reverse find to improve performance
     line = line[line.rfind('/') + 1:].lower()
+    results = [1.0 / len(result.group(1)) for result in prog.finditer(line) if result]
 
-    result = prog.search(line)
-    if result:
-        score = result.end() - result.start() + 1
-        score = score + ( len(line) + 1 ) / 100.0
-        score = score + ( len(line) + 1 ) / 1000.0
-        return 1000.0 / score
-
-    return 0
+    return max(results) if results else 0
 
 
 def path_score(line):
-    lineLower = line.lower()
-    result = prog.search(lineLower)
-    if result:
-        score = result.end() - result.start() + 1
-        score = score + ( len(lineLower) + 1 ) / 100.0
-        return 1000.0 / score
+    line = line.lower()
+    results = [1.0 / len(result.group(1)) for result in prog.finditer(line) if result]
 
-    return 0
+    return max(results) if results else 0
 
 
 if mmode == 'filename-only':
