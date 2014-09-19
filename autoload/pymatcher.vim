@@ -33,11 +33,8 @@ regex = ''
 if aregex == 1:
     regex = astr
 else:
-    if len(lowAstr) == 1:
-        regex = re.escape(lowAstr)
-    else:
-        escaped = [re.escape(c) for c in lowAstr]
-        regex = '(?=(' + ''.join([c + '[^' + c + ']*?' for c in escaped]) + '))'
+    escaped = [re.escape(c) for c in lowAstr]
+    regex = '(?=(' + ''.join([c + '[^' + c + ']*?' for c in escaped]) + '))'
 
 res = []
 prog = re.compile(regex)
