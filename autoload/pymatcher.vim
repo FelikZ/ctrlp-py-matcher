@@ -29,8 +29,6 @@ aregex = int(vim.eval('a:regex'))
 
 rez = vim.bindeval('s:rez')
 
-specialChars = ['^','$','.','{','}','(',')','[',']','\\','/','+']
-
 regex = ''
 if aregex == 1:
     regex = astr
@@ -57,12 +55,9 @@ def path_score(line):
 
     return max(results) if results else 0
 
+scorer = filename_score if mmode == 'filename-only' else path_score
 
-if mmode == 'filename-only':
-    res = [(filename_score(line), line) for line in items]
-else:
-    res = [(path_score(line), line) for line in items]
-
+res = [(scorer(line), line) for line in items]
 rez.extend(line for score, line in heapq.nlargest(limit, res))
 
 vim.command("let s:regex = '%s'" % regex)
