@@ -16,9 +16,9 @@ function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
     let s:regex = ''
 
 exec (has('python') ? ':py' : ':py3') ' << EOF'
+import os
 import vim, re
 import heapq
-from datetime import datetime
 
 items = vim.eval('a:items')
 astr = vim.eval('a:str')
@@ -40,7 +40,7 @@ res = []
 prog = re.compile(regex)
 
 def filename_score(line):
-    line = line[line.rfind('/') + 1:].lower()
+    line = os.path.basename(line)
     results = [1.0 / len(result.group(1)) for result in prog.finditer(line) if result]
 
     return max(results) if results else 0
