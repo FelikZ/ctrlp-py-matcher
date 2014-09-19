@@ -56,8 +56,7 @@ prog = re.compile(regex)
 
 def filename_score(line):
     # get filename via reverse find to improve performance
-    slashPos = line.rfind('/')
-    line = line if slashPos == -1 else line[slashPos + 1:]
+    line = line[line.rfind('/') + 1:]
 
     lineLower = line.lower()
     result = prog.search(lineLower)
