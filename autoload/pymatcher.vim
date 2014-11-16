@@ -83,6 +83,13 @@ def path_score(line):
 
 if mmode == 'filename-only':
     res = [(filename_score(line), line) for line in items]
+
+elif mmode == 'first-non-tab':
+    res = [(path_score(line.split('\t')[0]), line) for line in items]
+
+elif mmode == 'until-last-tab':
+    res = [(path_score(line.rsplit('\t')[0]), line) for line in items]
+
 else:
     res = [(path_score(line), line) for line in items]
 
