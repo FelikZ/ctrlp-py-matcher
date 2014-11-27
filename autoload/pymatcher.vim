@@ -27,7 +27,7 @@ limit = int(vim.eval('a:limit'))
 mmode = vim.eval('a:mmode')
 aregex = int(vim.eval('a:regex'))
 
-rez = vim.bindeval('s:rez')
+rez = vim.eval('s:rez')
 
 specialChars = ['^','$','.','{','}','(',')','[',']','\\','/','+']
 
@@ -96,6 +96,7 @@ else:
 rez.extend([line for score, line in heapq.nlargest(limit, res)])
 
 vim.command("let s:regex = '%s'" % regex)
+vim.command("let s:rez = %s" % str(rez))
 EOF
 
     let s:matchregex = '\v\c'
