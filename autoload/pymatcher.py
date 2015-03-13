@@ -78,8 +78,9 @@ def CtrlPPyMatch():
 
     rez.extend([line for score, line in heapq.nlargest(limit, res)])
 
-    # Use double quoted vim strings
-    vimrez = ['"%s"' % line.replace('"', '\\"').replace('\\', '\\\\') for line in rez]
+    # Use double quoted vim strings and escape \
+    vimrez = ['"' + line.replace('"', '\\"').replace('\\', '\\\\') + '"' for line in rez]
 
     vim.command("let s:regex = '%s'" % regex)
     vim.command('let s:rez = [%s]' % ','.join(vimrez))
+    
