@@ -76,7 +76,10 @@ def CtrlPPyMatch():
     else:
         res = [(path_score(line), line) for line in items]
 
-    rez.extend([line for score, line in heapq.nlargest(limit, res)])
+    #rez.extend([line for score, line in heapq.nlargest(limit, res)])
+    for score, line in heapq.nlargest(limit, res):
+        if score != 0:
+            rez.extend([line])
 
     # Use double quoted vim strings and escape \
     vimrez = ['"' + line.replace('\\', '\\\\').replace('"', '\\"') + '"' for line in rez]
