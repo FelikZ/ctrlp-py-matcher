@@ -19,10 +19,14 @@ count  total (s)   self (s)  function
     3              0.730215  pymatcher#PyMatch()
 ```
 
-To install this plugin you **need** Vim compiled with `+python` flag and version `7.4`+ (because of `vim.bindeval` like python functions. It can be rewriten via your pull request, to support vim < `7.3`):
+To achive this results try to do **long** (5-10+ sym) text queries on a large amount of files (1kk+).
+
+To install this plugin you **need** Vim compiled with `+python` flag:
 ```
 vim --version | grep python
 ```
+
+This plugin should be compatible with vim **7.x** and [NeoVIM](http://neovim.io) as well.
 
 **If you still have performance issues, it can be caused by [bufferline](https://github.com/bling/vim-bufferline) or another one plugin. So if it caused by bufferline you can switch to [airline](https://github.com/bling/vim-airline) and setup this option:**
 ```
