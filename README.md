@@ -28,7 +28,7 @@ vim --version | grep python
 
 This plugin should be compatible with vim **7.x** and [NeoVIM](http://neovim.io) as well.
 
-**If you still have performance issues, it can be caused by [bufferline](https://github.com/bling/vim-bufferline) or another one plugin. So if it caused by bufferline you can switch to [airline](https://github.com/bling/vim-airline) and setup this option:**
+**If you still have performance issues, it can be caused by [bufferline](https://github.com/bling/vim-bufferline) or another one plugin. So if it was caused by bufferline you can switch to [airline](https://github.com/bling/vim-airline) and setup this option:**
 ```
 let g:airline#extensions#tabline#enabled = 1
 ```
