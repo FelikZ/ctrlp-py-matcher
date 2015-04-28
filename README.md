@@ -3,7 +3,7 @@ ctrlp-py-matcher
 
 Fast CtrlP matcher based on python
 
-Performance difference is up to x22, look those profiling log:
+Performance difference is up to x22, look at this perf:
 
 Default matcher:
 ```
@@ -19,7 +19,7 @@ count  total (s)   self (s)  function
     3              0.730215  pymatcher#PyMatch()
 ```
 
-To achive this results try to do **long** (5-10+ sym) text queries on a large amount of files (1kk+).
+To achive such results try to do **long** (5-10+ sym) text queries on a large amount of files (1kk+).
 
 To install this plugin you **need** Vim compiled with `+python` flag:
 ```
@@ -28,7 +28,7 @@ vim --version | grep python
 
 This plugin should be compatible with vim **7.x** and [NeoVIM](http://neovim.io) as well.
 
-**If you still have performance issues, it can be caused by [bufferline](https://github.com/bling/vim-bufferline) or another one plugin. So if it caused by bufferline you can switch to [airline](https://github.com/bling/vim-airline) and setup this option:**
+**If you still have performance issues, it can be caused by [bufferline](https://github.com/bling/vim-bufferline) or alike plugins. So if, for example, it caused by bufferline you can switch to [airline](https://github.com/bling/vim-airline) and setup this option:**
 ```
 let g:airline#extensions#tabline#enabled = 1
 ```
