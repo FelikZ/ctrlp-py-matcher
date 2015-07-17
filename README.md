@@ -33,6 +33,27 @@ This plugin should be compatible with vim **7.x** and [NeoVIM](http://neovim.io)
 let g:airline#extensions#tabline#enabled = 1
 ```
 
+Installation
+------------
+### Pathogen (https://github.com/tpope/vim-pathogen)
+```
+git clone https://github.com/FelikZ/ctrlp-py-matcher ~/.vim/bundle/ctrlp-py-matcher
+```
+
+### Vundle (https://github.com/gmarik/vundle)
+```
+Plugin 'FelikZ/ctrlp-py-matcher'
+```
+
+### NeoBundle (https://github.com/Shougo/neobundle.vim)
+```
+NeoBundle 'FelikZ/ctrlp-py-matcher'
+```
+
+### ~/.vimrc setup
+
+    let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+
 Full documentation is available [here](https://github.com/FelikZ/ctrlp-py-matcher/blob/master/doc/pymatcher.txt)
 
 [![githalytics.com alpha](https://cruel-carlota.pagodabox.com/c38f2a3d6d6ba9a3e67be921ee2f68f0 "githalytics.com")](http://githalytics.com/FelikZ/ctrlp-py-matcher)
