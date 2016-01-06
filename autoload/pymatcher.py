@@ -40,7 +40,9 @@ def CtrlPPyMatch():
     def filename_score(line):
         # get filename via reverse find to improve performance
         slashPos = line.rfind('/')
-        line = line if slashPos == -1 else line[slashPos + 1:]
+
+        if slashPos != -1:
+            line = line[slashPos + 1:]
 
         lineLower = line.lower()
         result = prog.search(lineLower)
@@ -52,7 +54,6 @@ def CtrlPPyMatch():
 
         return 0
 
-
     def path_score(line):
         lineLower = line.lower()
         result = prog.search(lineLower)
@@ -62,7 +63,6 @@ def CtrlPPyMatch():
             return 1000.0 / score
 
         return 0
-
 
     if mmode == 'filename-only':
         res = [(filename_score(line), line) for line in items]
@@ -86,4 +86,4 @@ def CtrlPPyMatch():
 
     vim.command("let s:regex = '%s'" % regex)
     vim.command('let s:rez = [%s]' % ','.join(vimrez))
-    
+
