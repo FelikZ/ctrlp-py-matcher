@@ -1,6 +1,5 @@
 import vim, re
 import heapq
-from datetime import datetime
 
 def CtrlPPyMatch():
     items = vim.eval('a:items')
