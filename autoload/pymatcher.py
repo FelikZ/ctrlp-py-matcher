@@ -11,27 +11,23 @@ def CtrlPPyMatch():
 
     rez = vim.eval('s:rez')
 
-    specialChars = ['^','$','.','{','}','(',')','[',']','\\','/','+']
+    escape = {c : "\\" + c for c in ['^','$','.','{','}','(',')','[',']','\\','/','+']}
 
     regex = ''
     if aregex == 1:
         regex = astr
     else:
-        if len(lowAstr) == 1:
-            c = lowAstr
-            if c in specialChars:
-                c = '\\' + c
-            regex += c
-        else:
-            for c in lowAstr[:-1]:
-                if c in specialChars:
-                    c = '\\' + c
-                regex += c + '[^' + c + ']*'
-            else:
-                c = lowAstr[-1]
-                if c in specialChars:
-                    c = '\\' + c
-                regex += c
+        # Escape all of the characters as necessary
+        escaped = [escape.get(c, c) for c in lowAstr]
+
+        # If the string is longer that one character, append a mismatch
+        # expression to each character (except the last).
+        if len(lowAstr) > 1:
+            mismatch = ["[^" + c + "]*" for c in escaped[:-1]]
+            regex = ''.join([c for pair in zip(escaped[:-1], mismatch) for c in pair])
+
+        # Append the last character in the string to the regex
+        regex += escaped[-1]
 
     res = []
     prog = re.compile(regex)
