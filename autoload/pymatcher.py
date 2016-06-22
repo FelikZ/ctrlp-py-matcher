@@ -28,6 +28,9 @@ def CtrlPPyMatch():
 
         # Append the last character in the string to the regex
         regex += escaped[-1]
+    # because this IGNORECASE flag is extremely expensive we are converting everything to lower case
+    # see https://github.com/FelikZ/ctrlp-py-matcher/issues/29
+    regex = regex.lower()
 
     res = []
     prog = re.compile(regex)
