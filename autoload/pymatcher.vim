@@ -15,9 +15,13 @@ endif
 function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
 
     call clearmatches()
-    
+
     if a:str == ''
-        return a:items[0:a:limit]
+        let arr = a:items[0:a:limit]
+        if !exists('g:ctrlp_match_current_file') && a:ispath && !empty(a:crfile)
+            call remove(arr, index(arr, a:crfile))
+        endif
+        return arr
     endif
 
     let s:rez = []

@@ -8,6 +8,11 @@ def CtrlPPyMatch():
     limit = int(vim.eval('a:limit'))
     mmode = vim.eval('a:mmode')
     aregex = int(vim.eval('a:regex'))
+    spath = vim.eval('a:ispath')
+    crfile = vim.eval('a:crfile')
+
+    if not vim.eval('exists("g:ctrlp_match_current_file")') and ispath and crfile:
+        items.remove(crfile)
 
     rez = vim.eval('s:rez')
 
