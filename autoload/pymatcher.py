@@ -1,6 +1,8 @@
 import vim, re
 import heapq
 
+_escape = dict((c , "\\" + c) for c in ['^','$','.','{','}','(',')','[',']','\\','/','+'])
+
 def CtrlPPyMatch():
     items = vim.eval('a:items')
     astr = vim.eval('a:str')
@@ -16,14 +18,13 @@ def CtrlPPyMatch():
 
     rez = vim.eval('s:rez')
 
-    escape = {c : "\\" + c for c in ['^','$','.','{','}','(',')','[',']','\\','/','+']}
 
     regex = ''
     if aregex == 1:
         regex = astr
     else:
         # Escape all of the characters as necessary
-        escaped = [escape.get(c, c) for c in lowAstr]
+        escaped = [_escape.get(c, c) for c in lowAstr]
 
         # If the string is longer that one character, append a mismatch
         # expression to each character (except the last).
