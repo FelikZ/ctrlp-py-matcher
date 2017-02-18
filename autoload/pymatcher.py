@@ -1,10 +1,27 @@
+import os
 import vim, re
 import heapq
 
 _escape = dict((c , "\\" + c) for c in ['^','$','.','{','}','(',')','[',']','\\','/','+'])
 
 def CtrlPPyMatch():
-    items = vim.eval('a:items')
+    try:
+        _doCtrlPPyMatch()
+    except Exception as ex:
+        import traceback
+        tb = traceback.format_exc()
+        vim.command(
+            'let s:rez = ["Unknown error in matcher", "%s", "%s"]' %
+            (str(ex), tb))
+
+
+def _doCtrlPPyMatch():
+    try:
+        items = vim.eval('a:items')
+    except UnicodeDecodeError:
+        _troubleshootUnicodeInputError()
+        return
+
     astr = vim.eval('a:str')
     lowAstr = astr.lower()
     limit = int(vim.eval('a:limit'))
@@ -17,7 +34,7 @@ def CtrlPPyMatch():
         items.remove(crfile)
 
     rez = vim.eval('s:rez')
-
+    sep = vim.eval('s:slashsep')
 
     regex = ''
     if aregex == 1:
@@ -43,7 +60,7 @@ def CtrlPPyMatch():
 
     def filename_score(line):
         # get filename via reverse find to improve performance
-        slashPos = line.rfind('/')
+        slashPos = line.rfind(sep)
 
         if slashPos != -1:
             line = line[slashPos + 1:]
@@ -87,4 +104,17 @@ def CtrlPPyMatch():
 
     vim.command("let s:regex = '%s'" % regex)
     vim.command('let s:rez = [%s]' % ','.join(vimrez))
+
+
+def _troubleshootUnicodeInputError():
+    count = vim.eval('len(a:items)')
+    for i in range(int(count)):
+        try:
+            val = vim.eval('a:items[%d]' % i)
+        except:
+            vim.command(
+                'let s:rez = ["Unicode error at item %d: ".a:items[%d],'
+                '"Line contains invalid characters."]' %
+                (i, i))
+            break
 
