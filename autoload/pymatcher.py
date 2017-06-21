@@ -1,8 +1,10 @@
-import os
-import vim, re
+import re
+import vim
 import heapq
 
-_escape = dict((c , "\\" + c) for c in ['^','$','.','{','}','(',')','[',']','\\','/','+'])
+_escape = dict((c, "\\" + c) for c in [
+    '^', '$', '.', '{', '}', '(', ')', '[', ']', '\\', '/', '+'])
+
 
 def CtrlPPyMatch():
     try:
@@ -27,10 +29,11 @@ def _doCtrlPPyMatch():
     limit = int(vim.eval('a:limit'))
     mmode = vim.eval('a:mmode')
     aregex = int(vim.eval('a:regex'))
-    spath = vim.eval('a:ispath')
+    ispath = vim.eval('a:ispath')
     crfile = vim.eval('a:crfile')
 
-    if not vim.eval('exists("g:ctrlp_match_current_file")') and ispath and crfile:
+    if (not vim.eval('exists("g:ctrlp_match_current_file")') and
+            ispath and crfile):
         items.remove(crfile)
 
     rez = vim.eval('s:rez')
@@ -47,11 +50,13 @@ def _doCtrlPPyMatch():
         # expression to each character (except the last).
         if len(lowAstr) > 1:
             mismatch = ["[^" + c + "]*" for c in escaped[:-1]]
-            regex = ''.join([c for pair in zip(escaped[:-1], mismatch) for c in pair])
+            regex = ''.join([c for pair in zip(escaped[:-1], mismatch)
+                             for c in pair])
 
         # Append the last character in the string to the regex
         regex += escaped[-1]
-    # because this IGNORECASE flag is extremely expensive we are converting everything to lower case
+    # because this IGNORECASE flag is extremely expensive we are converting
+    # everything to lower case
     # see https://github.com/FelikZ/ctrlp-py-matcher/issues/29
     regex = regex.lower()
 
@@ -69,8 +74,8 @@ def _doCtrlPPyMatch():
         result = prog.search(lineLower)
         if result:
             score = result.end() - result.start() + 1
-            score = score + ( len(lineLower) + 1 ) / 100.0
-            score = score + ( len(line) + 1 ) / 1000.0
+            score = score + (len(lineLower) + 1) / 100.0
+            score = score + (len(line) + 1) / 1000.0
             return 1000.0 / score
 
         return 0
@@ -80,7 +85,7 @@ def _doCtrlPPyMatch():
         result = prog.search(lineLower)
         if result:
             score = result.end() - result.start() + 1
-            score = score + ( len(lineLower) + 1 ) / 100.0
+            score = score + (len(lineLower) + 1) / 100.0
             return 1000.0 / score
 
         return 0
@@ -97,10 +102,12 @@ def _doCtrlPPyMatch():
     else:
         res = [(path_score(line), line) for line in items]
 
-    rez.extend([line for score, line in heapq.nlargest(limit, res) if score != 0])
+    rez.extend([line for score, line in heapq.nlargest(limit, res)
+                if score != 0])
 
     # Use double quoted vim strings and escape \
-    vimrez = ['"' + line.replace('\\', '\\\\').replace('"', '\\"') + '"' for line in rez]
+    vimrez = ['"' + line.replace('\\', '\\\\').replace('"', '\\"') + '"'
+              for line in rez]
 
     vim.command("let s:regex = '%s'" % regex)
     vim.command('let s:rez = [%s]' % ','.join(vimrez))
@@ -110,11 +117,10 @@ def _troubleshootUnicodeInputError():
     count = vim.eval('len(a:items)')
     for i in range(int(count)):
         try:
-            val = vim.eval('a:items[%d]' % i)
+            vim.eval('a:items[%d]' % i)
         except:
             vim.command(
                 'let s:rez = ["Unicode error at item %d: ".a:items[%d],'
                 '"Line contains invalid characters."]' %
                 (i, i))
             break
-
