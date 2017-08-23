@@ -10,7 +10,6 @@ def CtrlPPyMatch():
     limit = int(vim.eval('a:limit'))
     mmode = vim.eval('a:mmode')
     aregex = int(vim.eval('a:regex'))
-    spath = vim.eval('a:ispath')
     crfile = vim.eval('a:crfile')
 
     if int(vim.eval("pymatcher#ShouldHideCurrentFile(a:ispath, a:crfile)")):
