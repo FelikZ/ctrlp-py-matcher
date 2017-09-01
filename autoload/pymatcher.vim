@@ -5,6 +5,11 @@ if !has('python') && !has('python3')
 endif
 
 let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
+if has('win32')
+  let s:sep = '\\'
+else
+  let s:sep = '/'
+endif
 
 if has('python3')
   execute 'py3file ' . s:plugin_path . '/pymatcher.py'
@@ -31,11 +36,7 @@ function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
 
     let s:matchregex = '\v\c'
 
-    if a:mmode == 'filename-only'
-        let s:matchregex .= '[\^\/]*'
-    endif
-
-    let s:matchregex .= s:regex
+    let s:matchregex .= (s:regex . '[^' . s:sep . ']*$')
 
     call matchadd('CtrlPMatch', s:matchregex)
 
