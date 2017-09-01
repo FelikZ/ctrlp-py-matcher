@@ -18,7 +18,7 @@ function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
 
     if a:str == ''
         let arr = a:items[0:a:limit]
-        if !exists('g:ctrlp_match_current_file') && a:ispath && !empty(a:crfile)
+        if pymatcher#ShouldHideCurrentFile(a:ispath, a:crfile)
             call remove(arr, index(arr, a:crfile))
         endif
         return arr
@@ -40,4 +40,8 @@ function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
     call matchadd('CtrlPMatch', s:matchregex)
 
     return s:rez
+endfunction
+
+function! pymatcher#ShouldHideCurrentFile(ispath, crfile)
+    return !g:ctrlp_match_current_file && a:ispath && getftype(a:crfile) == 'file'
 endfunction
