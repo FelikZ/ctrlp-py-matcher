@@ -12,7 +12,7 @@ def CtrlPPyMatch():
     aregex = int(vim.eval('a:regex'))
     crfile = vim.eval('a:crfile')
 
-    if int(vim.eval("pymatcher#ShouldHideCurrentFile(a:ispath, a:crfile)")):
+    if crfile in items and int(vim.eval("pymatcher#ShouldHideCurrentFile(a:ispath, a:crfile)")):
         items.remove(crfile)
 
     rez = vim.eval('s:rez')
