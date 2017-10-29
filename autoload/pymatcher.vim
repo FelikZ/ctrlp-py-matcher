@@ -43,5 +43,5 @@ function! pymatcher#PyMatch(items, str, limit, mmode, ispath, crfile, regex)
 endfunction
 
 function! pymatcher#ShouldHideCurrentFile(ispath, crfile)
-    return !g:ctrlp_match_current_file && a:ispath && getftype(a:crfile) == 'file'
+    return !get(g:, 'ctrlp_match_current_file', 0) && a:ispath && getftype(a:crfile) == 'file'
 endfunction
