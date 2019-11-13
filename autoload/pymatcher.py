@@ -1,10 +1,15 @@
 import vim
 import re
 import heapq
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 import os
 
 _escape = dict((c , "\\" + c) for c in ['^','$','.','{','}','(',')','[',']','\\','/','+'])
+
+if hasattr(str, 'casefold'):
+    str2lower = lambda s: s.casefold()
+else:
+    str2lower = lambda s: s.lower()
 
 class FilenameScore:
     def __init__(self, prog):
@@ -17,7 +22,7 @@ class FilenameScore:
         if slashPos != -1:
             line = line[slashPos + 1:]
 
-        lineLower = line.casefold()
+        lineLower = str2lower(line)
         result = self.prog.search(lineLower)
         if result:
             score = result.end() - result.start() + 1
@@ -34,7 +39,7 @@ class PathScore:
         self.until_last_tab = until_last_tab
 
     def __call__(self, line):
-        lineLower = line.casefold()
+        lineLower = str2lower(line)
         if self.first_non_tab:
             lineLower = lineLower.split('\t')[0]
         if self.until_last_tab:
@@ -66,7 +71,7 @@ class VimList:
 def CtrlPPyMatch():
     items = VimList('a:items')
     astr = vim.eval('a:str')
-    lowAstr = astr.casefold()
+    lowAstr = str2lower(astr)
     limit = int(vim.eval('a:limit'))
     mmode = vim.eval('a:mmode')
     aregex = int(vim.eval('a:regex'))
@@ -74,8 +79,14 @@ def CtrlPPyMatch():
 
     rez = vim.eval('s:rez')
 
-    pool = Pool(max(1, os.cpu_count()-1))
-    chunksize = 4096
+    pool = Pool(max(1, cpu_count()-1)) if os.name == 'posix' else None
+
+    def pool_map(func, items):
+        chunksize = 4096
+        if pool:
+            return pool.imap_unordered(func, items, chunksize)
+        else:
+            return (func(i) for i in items)
 
     regex = ''
     if aregex == 1:
@@ -93,28 +104,29 @@ def CtrlPPyMatch():
         regex += escaped[-1]
     # because this IGNORECASE flag is extremely expensive we are converting everything to lower case
     # see https://github.com/FelikZ/ctrlp-py-matcher/issues/29
-    regex = regex.casefold()
+    regex = str2lower(regex)
 
     res = []
     prog = re.compile(regex)
 
     if mmode == 'filename-only':
         filename_score = FilenameScore(prog)
-        res = pool.imap_unordered(filename_score, items, chunksize)
+        res = pool_map(filename_score, items)
 
     elif mmode == 'first-non-tab':
         path_score = PathScore(prog, first_non_tab=True)
-        res = pool.imap_unordered(path_score, items, chunksize)
+        res = pool_map(path_score, items)
 
     elif mmode == 'until-last-tab':
         path_score = PathScore(prog, until_last_tab=True)
-        res = pool.imap_unordered(path_score, items, chunksize)
+        res = pool_map(path_score, items)
 
     else:
         path_score = PathScore(prog)
-        res = pool.imap_unordered(path_score, items, chunksize)
+        res = pool_map(path_score, items)
 
-    pool.close()
+    if pool:
+        pool.close()
 
     rez.extend((line for score, line in heapq.nlargest(limit, res) if score != 0))
 
