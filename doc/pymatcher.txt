@@ -36,8 +36,8 @@ INSTALL                         *pymatcher-install*
     To enable |pymatcher| insert the following in your .vimrc:
 >
     " PyMatcher for CtrlP
-    if !has('python')
-        echo 'In order to use pymatcher plugin, you need +python compiled vim'
+    if !has('python3') && !has('python') 
+        echo 'In order to use pymatcher plugin, you need +python or +python3 compiled vim'
     else
         let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
     endif
