@@ -55,5 +55,3 @@ NeoBundle 'FelikZ/ctrlp-py-matcher'
     let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 
 Full documentation is available [here](https://github.com/FelikZ/ctrlp-py-matcher/blob/master/doc/pymatcher.txt)
-
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/c38f2a3d6d6ba9a3e67be921ee2f68f0 "githalytics.com")](http://githalytics.com/FelikZ/ctrlp-py-matcher)
