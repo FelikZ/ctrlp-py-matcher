@@ -19,7 +19,7 @@ count  total (s)   self (s)  function
     3              0.730215  pymatcher#PyMatch()
 ```
 
-To achive such results try to do **long** (5-10+ sym) text queries on a large amount of files (1kk+).
+To achieve such results try to do **long** (5-10+ sym) text queries on a large amount of files (1kk+).
 
 To install this plugin you **need** Vim compiled with `+python` flag:
 ```
