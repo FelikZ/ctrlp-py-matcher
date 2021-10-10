@@ -1,6 +1,6 @@
 " Python Matcher
 
-if !has('python') && !has('python3')
+if !has('python3') && !has('python') 
     echo 'In order to use pymatcher plugin, you need +python or +python3 compiled vim'
 endif
 
